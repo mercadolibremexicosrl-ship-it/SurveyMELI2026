@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Survey MELI</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f5f5f5;
+  margin: 0;
+}
+
+.container {
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
+}
+
+.screen { display: none; }
+.active { display: block; }
+
+.logo {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.logo img {
+  width: 120px;
+}
+
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+.progress-container {
+  margin-bottom: 10px;
+}
+
+.progress-text {
+  text-align: right;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.progress {
+  height: 6px;
+  background: #ddd;
+  border-radius: 10px;
+}
+
+.bar {
+  height: 6px;
+  background: #FFE600;
+  width: 0%;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.question {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.options label {
+  display: block;
+  margin: 5px 0;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+}
+
+/* LOGIN INPUTS */
+input[type="text"], input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 2px solid #3b82f6;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 15px;
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo">
+  <img src="https://http2.mlstatic.com/frontend-assets/ml-web-navigation/ui-navigation/6.6.92/mercadolibre/logo__large_plus.png">
+</div>
+
+<div class="progress-container">
+  <div class="progress-text" id="progressText">0%</div>
+  <div class="progress">
+    <div class="bar" id="bar"></div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="screen active">
+  <div class="card">
+
+    <h2 style="text-align:center;">Ingresa tu nombre de usuario</h2>
+
+    <label>Username</label>
+    <input type="text" id="user">
+
+    <label>Password</label>
+    <input type="password" id="pass">
+
+    <button onclick="login()">Siguiente</button>
+
+  </div>
+</div>
+
+<!-- INTRO -->
+<div class="screen">
+  <div class="card">
+    <h2>Engagement & EXE Survey Mayo 2026</h2>
+
+    <p>
+      ¡Te damos la bienvenida a nuestra Engagement & EXE Survey Mayo 2026! 
+      A continuación, podrás sumar tus opiniones acerca de: Engagement, 
+      Ejecución con excelencia (EXE) y expectativa de permanencia en MELI. 
+      Si tienes alguna duda respecto del significado de las afirmaciones 
+      sobre las cuales estás contestando, 
+      <span style="color:blue; text-decoration:underline;">clickea acá</span>.
+    </p>
+
+    <button onclick="next()">Comenzar</button>
+  </div>
+</div>
+
+<!-- ENGAGEMENT -->
+<div class="screen">
+  <h2>Engagement</h2>
+  <div id="engagement"></div>
+  <button onclick="goToExe()">Siguiente</button>
+</div>
+
+<!-- EXE -->
+<div class="screen">
+  <h2>EXE</h2>
+  <div id="exe"></div>
+  <button onclick="goToStay()">Siguiente</button>
+</div>
+
+<!-- PERMANENCIA -->
+<div class="screen">
+  <h2>Comparte tu expectativa de permanencia en MELI:</h2>
+
+  <div class="question">
+    <b>¿Cuánto tiempo estimas permanecer en MELI?</b>
+
+    <div class="options">
+      <label><input type="radio" name="stay"> Menos de 1 año</label>
+      <label><input type="radio" name="stay"> Entre 1 y 2 años</label>
+      <label><input type="radio" name="stay"> Entre 2 y 3 años</label>
+      <label><input type="radio" name="stay"> Más de 3 años</label>
+    </div>
+
+    <p><b>¿Por qué?</b></p>
+    <textarea placeholder="Escribe tu respuesta..."></textarea>
+
+  </div>
+
+  <button onclick="finish()">Finalizar</button>
+</div>
+
+<!-- FINAL -->
+<div class="screen">
+  <div class="card">
+    <h2>Esta encuesta ya fue realizada.</h2>
+    <p>Gracias por tu participación.</p>
+  </div>
+</div>
+
+</div>
+
+<script>
+
+let current = 0;
+const screens = document.querySelectorAll(".screen");
+const bar = document.getElementById("bar");
+
+function showScreen(i){
+  screens.forEach(s => s.classList.remove("active"));
+  screens[i].classList.add("active");
+
+  let percent = Math.round(((i + 1) / screens.length) * 100);
+  bar.style.width = percent + "%";
+  document.getElementById("progressText").innerText = percent + "%";
+}
+
+function next(){
+  current++;
+  showScreen(current);
+}
+
+function login(){
+  let u = document.getElementById("user").value;
+  let p = document.getElementById("pass").value;
+
+  if(u === "" || p === ""){
+    alert("Completa usuario y contraseña");
+    return;
+  }
+
+  next();
+}
+
+const scale = [
+"Muy en desacuerdo",
+"En desacuerdo",
+"Neutral",
+"De acuerdo",
+"Muy de acuerdo"
+];
+
+const engagement = [
+"Siento orgullo de trabajar en MELI.",
+"Mi líder está accesible para conversar sobre cualquier tema.",
+"Siento que mi líder valora mi contribución.",
+"En MELI encuentro oportunidades de aprender y emprender nuevos desafíos.",
+"Puedo organizar mis tiempos personales con flexibilidad.",
+"Mi líder acciona para elevar la vara del equipo.",
+"Mantengo conversaciones de feedback con mi líder de manera recurrente y efectiva.",
+"Las oportunidades de asumir nuevos desafíos se otorgan en base al mérito.",
+"Me motiva el trabajo que realizo.",
+"En mi equipo trabajamos con intensidad y dedicación.",
+"Lo que obtengo trabajando en MELI es mejor a lo que podria obtener en otro trabajo."
+];
+
+const exe = [
+"Aseguramos con nuestras acciones un entorno de trabajo seguro.",
+"Honramos los compromisos cumpliendo con lo prometido.",
+"Logramos nuestros objetivos optimizando tiempo y recursos.",
+"En mi equipo mantenemos las cosas simples.",
+"Las reuniones son efectivas."
+];
+
+function createQuestions(list, containerId, prefix){
+  const container = document.getElementById(containerId);
+
+  list.forEach((q, i)=>{
+    let div = document.createElement("div");
+    div.className = "question";
+
+    let html = `<b>${q}</b><div class="options">`;
+
+    scale.forEach((text, j)=>{
+      html += `
+        <label>
+          <input type="radio" name="${prefix}${i}">
+          ${text}
+        </label>
+      `;
+    });
+
+    html += "</div>";
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+}
+
+createQuestions(engagement, "engagement", "e");
+createQuestions(exe, "exe", "x");
+
+function goToExe(){
+  for(let i=0;i<engagement.length;i++){
+    if(!document.querySelector(`input[name="e${i}"]:checked`)){
+      alert("Responde todas las preguntas de Engagement");
+      return;
+    }
+  }
+  next();
+}
+
+function goToStay(){
+  for(let i=0;i<exe.length;i++){
+    if(!document.querySelector(`input[name="x${i}"]:checked`)){
+      alert("Responde todas las preguntas de EXE");
+      return;
+    }
+  }
+  next();
+}
+
+function finish(){
+  let stay = document.querySelector('input[name="stay"]:checked');
+  if(!stay){
+    alert("Selecciona tu expectativa de permanencia");
+    return;
+  }
+  next();
+}
+
+showScreen(0);
+
+</script>
+
+</body>
+</html>
